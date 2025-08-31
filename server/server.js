@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import { S3Client, GetObjectCommand, PutObjectCommand, ListObjectsV2Command ,HeadBucketCommand} from '@aws-sdk/client-s3';
+import { S3Client, GetObjectCommand, PutObjectCommand, ListObjectsV2Command,DeleteObjectCommand ,HeadBucketCommand} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import session from 'express-session'
 
@@ -60,10 +60,7 @@ app.post('/api/connect', async (req, res) => {
             console.error("Connection failed", err);
             return res.status(401).json({ message: 'Connection failed, invalid credentials or bucket name.' });
         }
-        //   req.session.awsConfig = { accessKeyId, secretAccessKey, region, bucketName };
-
-
-        //   res.status(200).json({message: 'Connected successfully!'});
+        
 
 
     }
@@ -94,6 +91,40 @@ app.get('/api/generate-upload-url', async (req, res) => {
     res.json({ uploadUrl: url });
 
 })
+
+
+app.get('/api/delete-url',async(req,res)=>{
+
+     const s3Client = getS3ClientFromSession(req);
+    if (!s3Client) {
+        return res.status(403).json({ error: 'Not connected to AWS.' });
+    }
+
+    const { key } = req.query;
+    if (!key) {
+        return res.status(400).json({ error: 'File key is required.' });
+    }
+
+
+    const {bucketName}=req.session.awsConfig;
+
+
+    const command = new DeleteObjectCommand({
+        Bucket:bucketName,
+        Key:key
+    })
+
+
+    try{
+        await S3Client.send(command);
+        res.json({message:'File deleted successfully'});
+    }catch(error){
+        console.log(error);
+        res.status(500).json({error:'failed to delete file'})
+    }
+
+
+});
 
 
 app.get('/api/list-files', async (req, res) => {
