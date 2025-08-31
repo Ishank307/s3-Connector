@@ -120,3 +120,23 @@ button:disabled {
   border-radius: 5px;
   font-size: 1rem;
 }
+
+.delete-btn {
+  background-color: #e53935; 
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.delete-btn:hover {
+  background-color: #c62828;
+}
+
+.file-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; /* <-- Increase this value from 1rem */
+}

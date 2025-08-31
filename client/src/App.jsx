@@ -102,13 +102,27 @@ function FileManager(){
   };
 
 
-  return (
+     const handleDelete = async (fileKey) => {
+    if (!window.confirm("Are you sure you want to delete this file?")) {
+      return;
+    }
+
+    try {
+      setMessage('Deleting file...');
+      await api.delete('')
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      setMessage('❌ Failed to delete file.');
+    }
+  };
+
+ return (
     <>
       <div className="card upload-section">
         <h2>Upload a New File</h2>
         <input id="file-input" type="file" onChange={handleFileChange} />
         <button onClick={handleUpload} disabled={uploading || !selectedFile}>
-          {uploading ? 'Uploading..' : 'Upload to S3'}
+          {uploading ? 'Uploading...' : 'Upload to S3'}
         </button>
         {message && <p className="message">{message}</p>}
       </div>
@@ -119,7 +133,12 @@ function FileManager(){
             {fileList.length > 0 ? fileList.map(file => (
               <li key={file.key}>
                 <a href={file.url} target="_blank" rel="noopener noreferrer">{file.key.split('/').pop()}</a>
-                <span>({(file.size / 1024).toFixed(2)} KB)</span>
+                <div className="file-actions">
+                  <span>({(file.size / 1024).toFixed(2)} KB)</span>
+                  <button className="delete-btn" onClick={() => handleDelete(file.key)}>
+                    Delete
+                  </button>
+                </div>
               </li>
             )) : <p>No files found.</p>}
           </ul>
