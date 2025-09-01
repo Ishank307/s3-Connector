@@ -70,6 +70,20 @@ app.post('/api/connect', async (req, res) => {
     }
 });
 
+app.post('/api/logout',(req,res)=>{
+
+    req.session.destroy(err=>{
+        if(err){
+            res.status(500).json({message:"Could not logout, please try again later"})
+        }
+        res.clearCookie('connect.sid');
+
+        res.status(200).json({ message: "Logged out successfully" });
+
+        return res.json({ message: 'Logged out successfully.'});
+    })
+})
+
 
 app.get('/api/generate-upload-url', async (req, res) => {
 
@@ -93,9 +107,9 @@ app.get('/api/generate-upload-url', async (req, res) => {
 })
 
 
-app.get('/api/delete-url',async(req,res)=>{
+app.get('/api/delete-file/:fileKey',async(req,res)=>{
 
-     const s3Client = getS3ClientFromSession(req);
+     const S3Client = getS3ClientFromSession(req);
     if (!s3Client) {
         return res.status(403).json({ error: 'Not connected to AWS.' });
     }

@@ -140,3 +140,18 @@ button:disabled {
   align-items: center;
   gap: 1.5rem; /* <-- Increase this value from 1rem */
 }
+
+.header-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.logout-btn {
+  background-color: #6c757d; 
+  font-weight: 500;
+}
+
+.logout-btn:hover {
+  background-color: #5a6268;
+}

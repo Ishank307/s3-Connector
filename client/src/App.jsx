@@ -109,7 +109,9 @@ function FileManager(){
 
     try {
       setMessage('Deleting file...');
-      await api.delete('')
+      await api.delete(`/delete-file/${fileKey}`)
+      setMessage('file deleted succesfully')
+      fetchFiles();
     } catch (error) {
       console.error('Error deleting file:', error);
       setMessage('❌ Failed to delete file.');
@@ -168,6 +170,18 @@ const handleConnect = async (config) => {
     }
   };
 
+
+
+  const handleLogout = async () => {
+    try {
+      await api.post('/logout');
+      setIsConnected(false); 
+      setConnectionMessage(''); 
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   return (
     <div className="container">
       <header>
@@ -175,7 +189,15 @@ const handleConnect = async (config) => {
       </header>
       
       {isConnected ? (
+
+        <>
+
+        <div className='header-action'>
+          <button onClick={handleLogout} className='logout-button'>logout</button>
+        </div>
         <FileManager />
+
+        </>
       ) : (
         <ConnectionForm 
           onConnection={handleConnect} 
